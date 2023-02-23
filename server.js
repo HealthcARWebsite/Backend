@@ -16,8 +16,8 @@ const dotenv = require('dotenv').config();
 // Imports the models folder 
 const db = require("./app/models");
 
-// Imports the routes folder
-//const r = require("./app/routes");
+// Imports the routes.js file 
+const routes = require('./app/routes/routes.js');
 
 // Instantiates the app
 const app = express();
@@ -26,14 +26,12 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.json())
-
-// Routes
-//app.use('/app/routes', r);
+app.use(routes);
 
 // Simple test route
-app.get('/', (req, res) => {
-    res.status(200).json({ message: 'Hello I am working' });
-});
+// app.get('/', (req, res) => {
+//     res.status(200).json({ message: 'Hello I am working' });
+// });
 
 // test of getting clinics from database
 // app.get('/clinics', async (req, res) => {
@@ -44,7 +42,6 @@ app.get('/', (req, res) => {
 //         console.error(err);
 //     }
 // });
-
 
 // Assigns either the local machines predefined port or port 4001
 const PORT = process.env.PORT || 4001;

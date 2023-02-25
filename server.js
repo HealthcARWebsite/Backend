@@ -1,9 +1,6 @@
 // Imports the express library 
 const express = require('express');
 
-// Imports client from db.config (basically allows a connection between backend and database)
-const client = require('./app/config/db.config.js');
-
 // Imports the cors library
 const cors = require('cors');
 
@@ -13,11 +10,10 @@ const bodyParser = require('body-parser');
 // Imports the dotenv library
 const dotenv = require('dotenv').config();
 
-// Imports the models folder 
-const db = require("./app/models");
+// Imports pool from db.js (basically allows a connection between backend and database)
+const pool = require('./db.js');
 
-// Imports the routes.js file 
-const routes = require('./app/routes/routes.js');
+const providerRoutes = require('./app/routes.js');
 
 // Instantiates the app
 const app = express();
@@ -26,31 +22,11 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.json())
-app.use(routes);
+app.use('/api/v1/providers', providerRoutes);
 
 // Simple test route
-// app.get('/', (req, res) => {
-//     res.status(200).json({ message: 'Hello I am working' });
-// });
-
-// test of getting clinics from database
-// app.get('/clinics', async (req, res) => {
-//     try {
-//         const clinics = await client.query('SELECT * FROM clinics')
-//         res.json(cinics.rows)
-//     } catch (err) {
-//         console.error(err);
-//     }
-// });
-
-
-
-client.createUserTable(() => {
-    console.log('Table creation complete');
-  
-    client.insertUserData(() => {
-        console.log('Data insertion complete');
-    });
+app.get('/', (req, res) => {
+    res.status(200).json({ message: 'Hello I am working' });
 });
 
 // Assigns either the local machines predefined port or port 4001

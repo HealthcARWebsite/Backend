@@ -43,6 +43,16 @@ app.use(routes);
 //     }
 // });
 
+
+
+client.createUserTable(() => {
+    console.log('Table creation complete');
+  
+    client.insertUserData(() => {
+        console.log('Data insertion complete');
+    });
+});
+
 // Assigns either the local machines predefined port or port 4001
 const PORT = process.env.PORT || 4001;
 

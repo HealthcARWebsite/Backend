@@ -24,6 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.json())
 app.use('/api/v1/providers', providerRoutes);
 
+
 // Simple test route
 app.get('/', (req, res) => {
     res.status(200).json({ message: 'Hello I am working' });

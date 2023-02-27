@@ -1,3 +1,4 @@
+// Connecting to Heroku database 
 const { Pool } = require('pg');
 require('dotenv').config();
 
@@ -10,29 +11,15 @@ const pool = new Pool({
 
 pool.connect();
 
-// function createProviderTable(callback) {
-//     const createTableQuery = `
-//         CREATE TABLE providers (
-//         name TEXT PRIMARY KEY,
-//         description TEXT,
-//         url TEXT,
-//         zipcode INTEGER,
-//         services TEXT[]
-//         );
-//     `;
 
-//     pool.query(createTableQuery, (err, result) => {
-//         if (err) 
-//             throw err;
-//         console.log('Table created successfully');
-//         callback();
-//     });
-// };
+// Connecting to local postgres database
+// const Pool = require('pg').Pool;
+// const pool = new Pool({
+//     user: "postgres",
+//     host: "localhost",
+//     database: "providers",
+//     password: "",
+//     port: 5432
+// });
 
-
-module.exports = {
-    pool,
-    //createProviderTable,
-};
-
-//module.exports = pool
+module.exports = pool

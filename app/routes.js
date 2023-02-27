@@ -7,7 +7,8 @@ const router = express.Router();
 // Imports the controller 
 const controller = require('./controller.js');
 
-router.get('/', () => controller.getProviders);
-router.post('/', () => controller.addProvider);
+// Routes
+router.get('/', controller.getProviders);
+router.post('/', controller.addProvider);
 
 module.exports = router;

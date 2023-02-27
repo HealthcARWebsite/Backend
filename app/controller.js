@@ -1,6 +1,7 @@
 const pool = require('../db.js');
 const queries = require('./queries.js');
 
+// Gets all providers from database
 const getProviders = (req, res) => {
     pool.query(queries.getProviders, (error, results) => {
         if (error) 
@@ -9,6 +10,7 @@ const getProviders = (req, res) => {
     });
 };
 
+// Adds providers to the database
 const addProvider = (req, res) => {
     const { name, description, url, zipcode, services } = req.body;
 
@@ -27,7 +29,7 @@ const addProvider = (req, res) => {
     });
 };
 
-module.export = {
+module.exports = {
     getProviders,
     addProvider,
 };

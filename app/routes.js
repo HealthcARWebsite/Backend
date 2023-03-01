@@ -9,6 +9,7 @@ const controller = require('./controller.js');
 
 // Routes
 router.get('/', controller.getProviders);
-router.post('/', controller.addProvider);
+router.get('/zipcode/:zipcode', controller.getZipCodes);
+router.post('/', controller.addProviders);
 
 module.exports = router;

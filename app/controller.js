@@ -11,7 +11,7 @@ const getProviders = (req, res) => {
 };
 
 // Adds providers to the database
-const addProvider = (req, res) => {
+const addProviders = (req, res) => {
     const { name, description, url, zipcode, services } = req.body;
 
     // Check if name exists
@@ -20,7 +20,7 @@ const addProvider = (req, res) => {
             res.send('Name already exists.');
         
         // If name does not exist add provider to database
-        pool.query(queries.addProvider, [name, description, url, zipcode, services], (error, results) => {
+        pool.query(queries.addProviders, [name, description, url, zipcode, services], (error, results) => {
             if (error) 
                 throw error;
             res.status(201).send('Provider created Successfully.');
@@ -29,7 +29,18 @@ const addProvider = (req, res) => {
     });
 };
 
+// Gets providers zipcodes
+const getZipCodes = (req, res) => {
+    const requestedZipCode = req.params.zipcode;
+    pool.query(queries.getZipCodes, [requestedZipCode], (error, results) => {
+        if (error) 
+            throw error;
+        res.status(200).json(results.rows);
+    });
+};
+
 module.exports = {
     getProviders,
-    addProvider,
+    addProviders,
+    getZipCodes,
 };

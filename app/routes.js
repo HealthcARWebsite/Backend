@@ -8,7 +8,7 @@ const router = express.Router();
 const controller = require('./controller.js');
 
 // Routes
-router.get('/', controller.getProviders);
+router.get('/', controller.getAllProviders);
 router.get('/zipcode/:zipcode', controller.getZipCodes);
 router.post('/', controller.addProviders);
 

@@ -11,5 +11,6 @@ const controller = require('./controller.js');
 router.get('/', controller.getAllProviders);
 router.get('/zipcode/:zipcode', controller.getZipCodes);
 router.post('/', controller.addProviders);
+router.post('/email', controller.sendEmail);
 
 module.exports = router;

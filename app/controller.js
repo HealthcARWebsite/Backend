@@ -1,6 +1,9 @@
 const pool = require('../db.js');
 const queries = require('./queries.js');
 
+// Imports the nodemailer library to send users emails
+const nodemailer = require('nodemailer');
+
 // Gets all providers from database
 const getAllProviders = (req, res) => {
     pool.query(queries.getAllProviders, (error, results) => {
@@ -47,8 +50,41 @@ const getZipCodes = async (req, res) => {
     } 
 };
 
+// Sends email to user 
+const sendEmail = (req, res) => {
+    //const userEmailAddress = req.body.emailAddress;
+    const webpageContent = 'Hello world this is a test! Test 1';
+  
+    const transporter = nodemailer.createTransport({
+        service: 'hotmail',
+        auth: {
+            user: 'Health-cAR@outlook.com',
+            pass: 'healthcar@123'
+        }
+    });
+  
+    const mailOptions = {
+        from: 'Health-cAR@outlook.com',
+        to: 'dms019@uark.edu',   //userEmailAddress,
+        subject: 'Test 1',
+        text: webpageContent
+    };
+  
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.log(error);
+            res.status(500).send('Error: Could not send email');
+        } 
+        else {
+            console.log('Email sent: ' + info.response);
+            res.status(200).send('Email sent successfully');
+        }
+    });
+};
+
 module.exports = {
     getAllProviders,
     addProviders,
     getZipCodes,
+    sendEmail,
 };

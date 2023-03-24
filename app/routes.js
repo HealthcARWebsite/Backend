@@ -8,9 +8,15 @@ const router = express.Router();
 const controller = require('./controller.js');
 
 // Routes
-router.get('/', controller.getAllProviders);
-router.get('/zipcode/:zipcode', controller.getZipCodes);
-router.post('/', controller.addProviders);
-router.post('/email', controller.sendEmail);
+router.get('/en', controller.getAllEnProviders);
+router.get('/es', controller.getAllEsProviders);
+router.get('/ms', controller.getAllMsProviders);
+router.get('/en/zipcode/:zipcode', controller.getZipCodes);
+router.get('/es/zipcode/:zipcode', controller.getZipCodes);
+router.get('/ms/zipcode/:zipcode', controller.getZipCodes);
+router.post('/en/email/', controller.sendEmail);
+router.post('/es/email', controller.sendEmail);
+router.post('/ms/email', controller.sendEmail);
+router.post('/', controller.addProviders);   // Can be deleted later
 
 module.exports = router;

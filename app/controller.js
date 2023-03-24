@@ -4,16 +4,37 @@ const queries = require('./queries.js');
 // Imports the nodemailer library to send users emails
 const nodemailer = require('nodemailer');
 
-// Gets all providers from database
-const getAllProviders = (req, res) => {
-    pool.query(queries.getAllProviders, (error, results) => {
+// Imports the puppeteer library to take screenshot of results
+const puppeteer = require('puppeteer');
+
+// Gets all english providers from database
+const getAllEnProviders = (req, res) => {
+    pool.query(queries.getAllEnProviders, (error, results) => {
         if (error) 
             throw error;
         res.status(200).json(results.rows);
     });
 };
 
-// Adds providers to the database
+// Gets all espanol providers from database
+const getAllEsProviders = (req, res) => {
+    pool.query(queries.getAllEsProviders, (error, results) => {
+        if (error) 
+            throw error;
+        res.status(200).json(results.rows);
+    });
+};
+
+// Gets all marshallese providers from database
+const getAllMsProviders = (req, res) => {
+    pool.query(queries.getAllMsProviders, (error, results) => {
+        if (error) 
+            throw error;
+        res.status(200).json(results.rows);
+    });
+};
+
+// Adds providers to the database // Can be deleted later
 const addProviders = (req, res) => {
     const { name, description, url, zipcode, services } = req.body;
 
@@ -50,27 +71,105 @@ const getZipCodes = async (req, res) => {
     } 
 };
 
-// Sends email to user 
-const sendEmail = (req, res) => {
-    //const userEmailAddress = req.body.emailAddress;
-    const webpageContent = 'Hello world this is a test! Test 1';
+// // Sends email to user 
+// const sendEmail = (req, res) => {
+//     const userEmailAddress = req.params.emailAddress;
   
+//     const transporter = nodemailer.createTransport({
+//         service: process.env.SERVICE,
+//         auth: {
+//             user: process.env.EMAIL_USER,
+//             pass: process.env.EMAIL_PASSWORD
+//         }
+//     });
+  
+//     const mailOptions = {
+//         from: process.env.EMAIL_USER,
+//         to: userEmailAddress,
+//         subject: 'HealthcAR Results',
+//         html: message
+//     };
+  
+//     transporter.sendMail(mailOptions, (error, info) => {
+//         if (error) {
+//             console.log(error);
+//             res.status(500).send('Error: Could not send email');
+//         } 
+//         else {
+//             console.log('Email sent: ' + info.response);
+//             res.status(200).send('Email sent successfully');
+//         }
+//     });
+// };
+
+const url = 'http://localhost:3000/providers/en/';
+
+const sendEmail = async (req, res) => {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.goto(url, {waitUntil: 'networkidle0'});
+    const userEmailAddress = req.body.emailAddress;
+    
+    // Take a screenshot of the webpage and save it as a PDF file
+    const pdfBuffer = await page.pdf({format: 'A4'});
+  
+    // Close the browser
+    await browser.close();
+  
+    const message = {
+        from: process.env.EMAIL_USER,
+        to: userEmailAddress,
+        subject: 'HealthcAR Results',
+        html: `
+            <p>Hello,</p>
+            <p>
+                Thank you for choosing HealthcAR, the road to accessbile healthcare in the state of Arkansas! 
+                We at HealthcAR make it a priorty to deliver low-cost healthcare clinic information to people 
+                around the state of Arkansas.
+            </p>
+            <p>
+                Privacy more than ever before is a top concern for many people. We at HealtcAR take pride 
+                in collecting zero user data so our users can feel at ease when using our website. 
+            </p>
+            <p> 
+                You are recieving this email because you have requested to have your results emailed to you. 
+                Your results are attached to this email.
+            </p>
+            <p>
+                Furthermore, if you would like to request another provider be added to HealthcAR, please 
+                navigate to the HealtcAR website and click on the button that says add provider and
+                fill out the form of the providers information. Our team will then review the provider 
+                credentials and make it available to others after review.
+            </p>
+            <p>
+                Again, thank you for choosing HealthcAR! 
+            </p>
+            <p>
+                Sincerely, <br>
+                The HealthcAR Team
+            </p>
+            <img src="cid:webpage-screenshot"/>
+        `,
+        attachments: [
+            {
+                filename: 'webpage-screenshot.pdf',
+                content: pdfBuffer,
+                contentType: 'application/pdf',
+                contentDisposition: 'attachment',
+                cid: 'webpage-screenshot'
+            }
+        ]
+    };
+
     const transporter = nodemailer.createTransport({
-        service: 'hotmail',
+        service: process.env.SERVICE,
         auth: {
-            user: 'Health-cAR@outlook.com',
-            pass: 'healthcar@123'
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD
         }
     });
   
-    const mailOptions = {
-        from: 'Health-cAR@outlook.com',
-        to: 'dms019@uark.edu',   //userEmailAddress,
-        subject: 'Test 1',
-        text: webpageContent
-    };
-  
-    transporter.sendMail(mailOptions, (error, info) => {
+    transporter.sendMail(message, (error, info) => {
         if (error) {
             console.log(error);
             res.status(500).send('Error: Could not send email');
@@ -83,7 +182,9 @@ const sendEmail = (req, res) => {
 };
 
 module.exports = {
-    getAllProviders,
+    getAllEnProviders,
+    getAllEsProviders,
+    getAllMsProviders,
     addProviders,
     getZipCodes,
     sendEmail,

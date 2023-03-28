@@ -71,39 +71,54 @@ const getZipCodes = async (req, res) => {
     } 
 };
 
-// // Sends email to user 
-// const sendEmail = (req, res) => {
-//     const userEmailAddress = req.params.emailAddress;
+// Allows users to submit a possible new provider to be added to the website 
+const addProvider = (req, res) => {
+    const providerData = {
+        name: req.body.name,
+        email: req.body.email,
+        phone: req.body.phone,
+        organization: req.body.organization,
+        message: req.body.message
+    };
   
-//     const transporter = nodemailer.createTransport({
-//         service: process.env.SERVICE,
-//         auth: {
-//             user: process.env.EMAIL_USER,
-//             pass: process.env.EMAIL_PASSWORD
-//         }
-//     });
+    // Send email to admin team
+    const transporter = nodemailer.createTransport({
+        service: process.env.SERVICE,
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD
+        }
+    });
   
-//     const mailOptions = {
-//         from: process.env.EMAIL_USER,
-//         to: userEmailAddress,
-//         subject: 'HealthcAR Results',
-//         html: message
-//     };
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: 'dms019@uark.edu',
+        subject: 'New Provider Submission',
+        text: `
+            Name: ${providerData.name}\n
+            Email: ${providerData.email}\n
+            Phone: ${providerData.phone}\n
+            Organization: ${providerData.organization}\n
+            Message: ${providerData.message} 
+        `
+    };
   
-//     transporter.sendMail(mailOptions, (error, info) => {
-//         if (error) {
-//             console.log(error);
-//             res.status(500).send('Error: Could not send email');
-//         } 
-//         else {
-//             console.log('Email sent: ' + info.response);
-//             res.status(200).send('Email sent successfully');
-//         }
-//     });
-// };
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.log(error);
+            res.status(500).send('Error: Could not send email');
+        } 
+        else {
+            console.log('Email sent: ' + info.response);
+            res.status(200).send('Email sent successfully');
+        }
+    });
+};
 
+// Constant variable for sendEmail function
 const url = 'http://localhost:3000/providers/en/';
 
+// Sends an email to users that press the email results button and takes a screenshot of screen
 const sendEmail = async (req, res) => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -188,4 +203,5 @@ module.exports = {
     addProviders,
     getZipCodes,
     sendEmail,
+    addProvider,
 };

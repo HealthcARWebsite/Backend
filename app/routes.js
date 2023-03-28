@@ -17,6 +17,7 @@ router.get('/ms/zipcode/:zipcode', controller.getZipCodes);
 router.post('/en/email/', controller.sendEmail);
 router.post('/es/email', controller.sendEmail);
 router.post('/ms/email', controller.sendEmail);
+router.post('/en/addprovider', controller.addProvider);
 router.post('/', controller.addProviders);   // Can be deleted later
 
 module.exports = router;

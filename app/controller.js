@@ -7,7 +7,7 @@ const nodemailer = require('nodemailer');
 // Imports the accept-language-parser library to know what language to use
 const acceptLanguage = require('accept-language-parser');
 
-// Gets all providers from database
+// Gets all providers from database depending on the users language preference 
 const getAllProviders = (req, res) => {
     const preferredLanguages = acceptLanguage.parse(req.headers['accept-language']);
 
@@ -48,17 +48,22 @@ const getZipCodes = async (req, res) => {
     } 
 };
 
-// Allows users to submit a possible new provider to be added to the website 
+// Allows users to submit a request to add new providers via email
 const addProvider = (req, res) => {
-    const providerData = {
-        name: req.body.name,
-        email: req.body.email,
-        phone: req.body.phone,
-        organization: req.body.organization,
-        message: req.body.message
-    };
+    const providerData = req.body;
+
+    // Check for empty name or message fields
+    if (!providerData.name || !providerData.message)
+        return res.status(400).send('Error: Name and message fields are required');
+
+    // const providerData = {
+    //     name: req.body.name,
+    //     email: req.body.email,
+    //     phone: req.body.phone,
+    //     organization: req.body.organization,
+    //     message: req.body.message
+    // };
   
-    // Send email to admin team
     const transporter = nodemailer.createTransport({
         service: process.env.SERVICE,
         auth: {
@@ -69,7 +74,7 @@ const addProvider = (req, res) => {
   
     const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: 'dms019@uark.edu',
+        to: process.env.EMAIL_USER,
         subject: process.env.SUBJECT,
         text: `
             Name: ${providerData.name}\n

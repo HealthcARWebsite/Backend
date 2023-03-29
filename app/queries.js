@@ -11,7 +11,6 @@ const getZipCodes = `
     zipcode ASC
 `;
 
-
 module.exports = {
     getAllEnProviders,
     getAllEsProviders,

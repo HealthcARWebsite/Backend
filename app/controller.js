@@ -4,54 +4,15 @@ const queries = require('./queries.js');
 // Imports the nodemailer library to send users emails
 const nodemailer = require('nodemailer');
 
-// Imports the puppeteer library to take screenshot of results
-const puppeteer = require('puppeteer');
+// Imports the accept-language-parser library to know what language to use
+const acceptLanguage = require('accept-language-parser');
 
-// Gets all english providers from database
-const getAllEnProviders = (req, res) => {
+// Gets all providers from database
+const getAllProviders = (req, res) => {
     pool.query(queries.getAllEnProviders, (error, results) => {
         if (error) 
             throw error;
         res.status(200).json(results.rows);
-    });
-};
-
-// Gets all espanol providers from database
-const getAllEsProviders = (req, res) => {
-    pool.query(queries.getAllEsProviders, (error, results) => {
-        if (error) 
-            throw error;
-        res.status(200).json(results.rows);
-    });
-};
-
-// Gets all marshallese providers from database
-const getAllMsProviders = (req, res) => {
-    pool.query(queries.getAllMsProviders, (error, results) => {
-        if (error) 
-            throw error;
-        res.status(200).json(results.rows);
-    });
-};
-
-// Adds providers to the database // Can be deleted later
-const addProviders = (req, res) => {
-    const { name, description, url, zipcode, services } = req.body;
-
-    // Check if name exists
-    pool.query(queries.checkNameExists, [name], (error, results) => {
-        if (error)
-            throw error;
-        if (results.rows.length)
-            res.send('Name already exists.');
-        
-        // If name does not exist add provider to database
-        pool.query(queries.addProviders, [name, description, url, zipcode, services], (error, results) => {
-            if (error) 
-                throw error;
-            res.status(201).send('Provider created Successfully.');
-            console.log('Provider created');
-        });
     });
 };
 
@@ -115,21 +76,9 @@ const addProvider = (req, res) => {
     });
 };
 
-// Constant variable for sendEmail function
-const url = 'http://localhost:3000/providers/en/';
-
 // Sends an email to users that press the email results button and takes a screenshot of screen
-const sendEmail = async (req, res) => {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.goto(url, {waitUntil: 'networkidle0'});
+const emailResults = async (req, res) => {
     const userEmailAddress = req.body.emailAddress;
-    
-    // Take a screenshot of the webpage and save it as a PDF file
-    const pdfBuffer = await page.pdf({format: 'A4'});
-  
-    // Close the browser
-    await browser.close();
   
     const message = {
         from: process.env.EMAIL_USER,
@@ -164,16 +113,7 @@ const sendEmail = async (req, res) => {
                 The HealthcAR Team
             </p>
             <img src="cid:webpage-screenshot"/>
-        `,
-        attachments: [
-            {
-                filename: 'webpage-screenshot.pdf',
-                content: pdfBuffer,
-                contentType: 'application/pdf',
-                contentDisposition: 'attachment',
-                cid: 'webpage-screenshot'
-            }
-        ]
+        `
     };
 
     const transporter = nodemailer.createTransport({
@@ -197,11 +137,8 @@ const sendEmail = async (req, res) => {
 };
 
 module.exports = {
-    getAllEnProviders,
-    getAllEsProviders,
-    getAllMsProviders,
-    addProviders,
+    getAllProviders,
     getZipCodes,
-    sendEmail,
     addProvider,
+    emailResults,
 };

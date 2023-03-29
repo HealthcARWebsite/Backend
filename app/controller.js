@@ -9,16 +9,32 @@ const acceptLanguage = require('accept-language-parser');
 
 // Gets all providers from database
 const getAllProviders = (req, res) => {
-    pool.query(queries.getAllEnProviders, (error, results) => {
-        if (error) 
-            throw error;
-        res.status(200).json(results.rows);
+    const preferredLanguages = acceptLanguage.parse(req.headers['accept-language']);
+
+    let query;
+    if (preferredLanguages.length > 0 && preferredLanguages[0].code === 'en') {
+        query = queries.getAllEnProviders;
+    } 
+    else if (preferredLanguages.length > 0 && preferredLanguages[1].code === 'es') {
+        query = queries.getAllEsProviders;
+    }
+    else if (preferredLanguages.length > 0 && preferredLanguages[2].code === 'mh') {
+        query = queries.getAllMhProviders;
+    }
+
+    pool.query(query, (error, results) => {
+        if (error) {
+            console.error('Error executing query', error);
+            res.status(500).send('An error occurred');
+        }
+        else
+            res.status(200).json(results.rows);
     });
 };
 
 // Gets providers zipcodes and orders them by closest to furthest
 const getZipCodes = async (req, res) => {
-    const requestedZipCode = req.params.zipcode;
+    const requestedZipCode = req.body.zipcode;
     try {
         pool.query(queries.getZipCodes, [requestedZipCode], (error, results) => {
             if (error)

@@ -11,15 +11,4 @@ const pool = new Pool({
 
 pool.connect();
 
-
-// // Connecting to local postgres database
-// const Pool = require('pg').Pool;
-// const pool = new Pool({
-//     user: "postgres",
-//     host: "localhost",
-//     database: "providers",
-//     password: "Razorback@5150",
-//     port: 5432
-// });
-
 module.exports = pool

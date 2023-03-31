@@ -48,21 +48,157 @@ const getZipCodes = async (req, res) => {
     } 
 };
 
+// Sends an email to users that press the email results button 
+const emailResults = async (req, res) => {
+    const requestedZipCode = req.body.zipcode;
+    const userEmailAddress = req.body.emailAddress;
+    
+    try {
+        // Initializes clinic array
+        const clinics = []; 
+        
+        // Calls getZipCodes query
+        pool.query(queries.getZipCodes, [requestedZipCode], (error, results) => {
+            if (error) {
+                console.error(error);
+                return res.status(500).send('Internal Server Error');
+            }
+  
+            // Check if results.rows is undefined or empty
+            if (!results.rows || results.rows.length === 0) 
+                return res.status(404).send('No clinics found');
+    
+            // Push the clinic information objects to the clinics array
+            results.rows.forEach(row => {
+                clinics.push({
+                    name: row.name,
+                    description: row.description,
+                    url: row.url,
+                    zipcode: row.zipcode
+                });
+            });
+    
+            // Render the template with the clinics data
+            const html = `
+                <html>
+                    <head>
+                        <style>
+                            table {
+                                font-family: arial, sans-serif;
+                                border-collapse: collapse;
+                                width: 100%;
+                            }
+                            
+                            td, th {
+                                border: 1px solid #dddddd;
+                                text-align: left;
+                                padding: 8px;
+                            }
+                            
+                            tr:nth-child(even) {
+                                background-color: #dddddd;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <p>Hello,</p>
+                        <p>
+                            Thank you for choosing HealthcAR, the road to accessbile healthcare in the state of Arkansas! 
+                            We at HealthcAR make it a priorty to deliver low-cost healthcare clinic information to people 
+                            around the state of Arkansas.
+                        </p>
+                        <p>
+                            Privacy more than ever before is a top concern for many people. We at HealtcAR take pride 
+                            in collecting zero user data so our users can feel at ease when using our website. 
+                        </p>
+                        <p> 
+                            You are recieving this email because you have requested to have your results emailed to you. 
+                            Your results are attached to this email.
+                        </p>
+                        <p>
+                            Furthermore, if you would like to request another provider be added to HealthcAR, please 
+                            navigate to the HealtcAR website and click on the button that says add provider and
+                            fill out the form of the providers information. Our team will then review the provider 
+                            credentials and make it available to others after review.
+                        </p>
+                        <p>
+                            Again, thank you for choosing HealthcAR! 
+                        </p>
+                        <p>
+                            Sincerely, <br>
+                            The HealthcAR Team
+                        </p>
+
+                        <h1>Providers</h1>
+                        <table>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>URL</th>
+                                <th>Zipcode</th>
+                            </tr>
+                            ${clinics.map(clinic => `
+                            <tr>
+                                <td>${clinic.name}</td>
+                                <td>${clinic.description}</td>
+                                <td>${clinic.url}</td>
+                                <td>${clinic.zipcode}</td>
+                            </tr>
+                            `).join('')}
+                        </table>
+                    </body>
+                </html>
+            `;
+
+            // Send the HTML email with the clinics data
+            sendEmail(userEmailAddress, 'HealthcAR Results', html);
+  
+            // Send a success response
+            return res.status(200).send('Email sent successfully');
+        });
+    } 
+    catch (error) {
+        console.error(error);
+        return res.status(500).send('Internal Server Error');
+    }
+};
+  
+
+const sendEmail = async (to, subject, html) => {
+    const transporter = nodemailer.createTransport({
+        service: process.env.SERVICE,
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD
+        }
+    });
+  
+    // Define the email message
+    const message = {
+        from: process.env.EMAIL_USER,
+        to,
+        subject,
+        html
+    };
+  
+    // Send the email
+    try {
+        const info = await transporter.sendMail(message);
+        console.log(`Email sent successfully: ${info.messageId}`);
+    } 
+    catch (error) {
+        console.error(error);
+    }
+};
+
 // Allows users to submit a request to add new providers via email
 const addProvider = (req, res) => {
     const providerData = req.body;
-
+    //const providerData = JSON.parse(req.body);
+    
     // Check for empty name or message fields
     if (!providerData.name || !providerData.message)
         return res.status(400).send('Error: Name and message fields are required');
-
-    // const providerData = {
-    //     name: req.body.name,
-    //     email: req.body.email,
-    //     phone: req.body.phone,
-    //     organization: req.body.organization,
-    //     message: req.body.message
-    // };
   
     const transporter = nodemailer.createTransport({
         service: process.env.SERVICE,
@@ -97,65 +233,65 @@ const addProvider = (req, res) => {
     });
 };
 
-// Sends an email to users that press the email results button and takes a screenshot of screen
-const emailResults = async (req, res) => {
-    const userEmailAddress = req.body.emailAddress;
-  
-    const message = {
-        from: process.env.EMAIL_USER,
-        to: userEmailAddress,
-        subject: 'HealthcAR Results',
-        html: `
-            <p>Hello,</p>
-            <p>
-                Thank you for choosing HealthcAR, the road to accessbile healthcare in the state of Arkansas! 
-                We at HealthcAR make it a priorty to deliver low-cost healthcare clinic information to people 
-                around the state of Arkansas.
-            </p>
-            <p>
-                Privacy more than ever before is a top concern for many people. We at HealtcAR take pride 
-                in collecting zero user data so our users can feel at ease when using our website. 
-            </p>
-            <p> 
-                You are recieving this email because you have requested to have your results emailed to you. 
-                Your results are attached to this email.
-            </p>
-            <p>
-                Furthermore, if you would like to request another provider be added to HealthcAR, please 
-                navigate to the HealtcAR website and click on the button that says add provider and
-                fill out the form of the providers information. Our team will then review the provider 
-                credentials and make it available to others after review.
-            </p>
-            <p>
-                Again, thank you for choosing HealthcAR! 
-            </p>
-            <p>
-                Sincerely, <br>
-                The HealthcAR Team
-            </p>
-            <img src="cid:webpage-screenshot"/>
-        `
-    };
+// Sends an email to users that press the email results button 
+// const emailResults = async (req, res) => {
+//     const userEmailAddress = req.body.emailAddress;
 
-    const transporter = nodemailer.createTransport({
-        service: process.env.SERVICE,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASSWORD
-        }
-    });
+//     const message = {
+//         from: process.env.EMAIL_USER,
+//         to: userEmailAddress,
+//         subject: 'HealthcAR Results',
+//         html: `
+//             <p>Hello,</p>
+//             <p>
+//                 Thank you for choosing HealthcAR, the road to accessbile healthcare in the state of Arkansas! 
+//                 We at HealthcAR make it a priorty to deliver low-cost healthcare clinic information to people 
+//                 around the state of Arkansas.
+//             </p>
+//             <p>
+//                 Privacy more than ever before is a top concern for many people. We at HealtcAR take pride 
+//                 in collecting zero user data so our users can feel at ease when using our website. 
+//             </p>
+//             <p> 
+//                 You are recieving this email because you have requested to have your results emailed to you. 
+//                 Your results are attached to this email.
+//             </p>
+//             <p>
+//                 Furthermore, if you would like to request another provider be added to HealthcAR, please 
+//                 navigate to the HealtcAR website and click on the button that says add provider and
+//                 fill out the form of the providers information. Our team will then review the provider 
+//                 credentials and make it available to others after review.
+//             </p>
+//             <p>
+//                 Again, thank you for choosing HealthcAR! 
+//             </p>
+//             <p>
+//                 Sincerely, <br>
+//                 The HealthcAR Team
+//             </p>
+//         `
+//     };
+
+    // const transporter = nodemailer.createTransport({
+    //     service: process.env.SERVICE,
+    //     auth: {
+    //         user: process.env.EMAIL_USER,
+    //         pass: process.env.EMAIL_PASSWORD
+    //     }
+    // });
   
-    transporter.sendMail(message, (error, info) => {
-        if (error) {
-            console.log(error);
-            res.status(500).send('Error: Could not send email');
-        } 
-        else {
-            console.log('Email sent: ' + info.response);
-            res.status(200).send('Email sent successfully');
-        }
-    });
-};
+//     transporter.sendMail(message, (error, info) => {
+//         if (error) {
+//             console.log(error);
+//             res.status(500).send('Error: Could not send email');
+//         } 
+//         else {
+//             console.log('Email sent: ' + info.response);
+//             res.status(200).send('Email sent successfully');
+//         }
+//     });
+// };
+
 
 module.exports = {
     getAllProviders,

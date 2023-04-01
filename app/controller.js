@@ -177,7 +177,7 @@ const emailResults = async (req, res) => {
         const clinics = []; 
         
         // Calls getZipCodes query
-        pool.query(queries.getZipCodes, [requestedZipCode], (error, results) => {
+        pool.query(queries.getEnZipCodes, [requestedZipCode], (error, results) => {
             if (error) {
                 console.error(error);
                 return res.status(500).send('Internal Server Error');

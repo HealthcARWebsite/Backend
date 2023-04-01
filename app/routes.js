@@ -9,7 +9,6 @@ const controller = require('./controller.js');
 
 // Routes
 router.get('/get-providers', controller.getAllProviders);
-router.get('/get-providers/zipcode', controller.getZipCodes);
 router.post('/contact-us', controller.addProvider);
 router.post('/email', controller.emailResults);
 

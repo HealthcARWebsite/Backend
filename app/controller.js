@@ -21,7 +21,7 @@ const getAllProviders = async (req, res) => {
             let providers = result.rows;
     
             if (requestedZipCode) {
-                const zipCodes = await getZipCodes(requestedZipCode);
+                const zipCodes = await getEnZipCodes(requestedZipCode);
                 providers = providers.filter(provider => zipCodes.includes(provider.zipcode));
                 providers.sort((a, b) => zipCodes.indexOf(a.zipcode) - zipCodes.indexOf(b.zipcode)); 
             }
@@ -41,7 +41,7 @@ const getAllProviders = async (req, res) => {
             let providers = result.rows;
     
             if (requestedZipCode) {
-                const zipCodes = await getZipCodes(requestedZipCode);
+                const zipCodes = await getEsZipCodes(requestedZipCode);
                 providers = providers.filter(provider => zipCodes.includes(provider.zipcode));
                 providers.sort((a, b) => zipCodes.indexOf(a.zipcode) - zipCodes.indexOf(b.zipcode)); 
             }
@@ -61,7 +61,7 @@ const getAllProviders = async (req, res) => {
             let providers = result.rows;
     
             if (requestedZipCode) {
-                const zipCodes = await getZipCodes(requestedZipCode);
+                const zipCodes = await getMhZipCodes(requestedZipCode);
                 providers = providers.filter(provider => zipCodes.includes(provider.zipcode));
                 providers.sort((a, b) => zipCodes.indexOf(a.zipcode) - zipCodes.indexOf(b.zipcode)); 
             }
@@ -75,10 +75,42 @@ const getAllProviders = async (req, res) => {
     }
 };
 
-// Helper function to get the users requested zipcode from the database 
-const getZipCodes = async (requestedZipCode) => {
+// Helper function to get the users requested zipcode from the database in english
+const getEnZipCodes = async (requestedZipCode) => {
     return new Promise((resolve, reject) => {
-        pool.query(queries.getZipCodes, [requestedZipCode], (error, results) => {
+        pool.query(queries.getEnZipCodes, [requestedZipCode], (error, results) => {
+            if (error) {
+                console.error(error);
+                reject(new Error('Error retrieving zip codes'));
+            } 
+            else {
+                const zipCodes = results.rows.map((row) => row.zipcode);
+                resolve(zipCodes);
+            }
+        });
+    });
+};
+
+// Helper function to get the users requested zipcode from the database in espanol
+const getEsZipCodes = async (requestedZipCode) => {
+    return new Promise((resolve, reject) => {
+        pool.query(queries.getEsZipCodes, [requestedZipCode], (error, results) => {
+            if (error) {
+                console.error(error);
+                reject(new Error('Error retrieving zip codes'));
+            } 
+            else {
+                const zipCodes = results.rows.map((row) => row.zipcode);
+                resolve(zipCodes);
+            }
+        });
+    });
+};
+
+// Helper function to get the users requested zipcode from the database in marshallese
+const getMhZipCodes = async (requestedZipCode) => {
+    return new Promise((resolve, reject) => {
+        pool.query(queries.getMhZipCodes, [requestedZipCode], (error, results) => {
             if (error) {
                 console.error(error);
                 reject(new Error('Error retrieving zip codes'));
@@ -354,7 +386,9 @@ const addProvider = (req, res) => {
 
 module.exports = {
     getAllProviders,
-    getZipCodes,
+    getEnZipCodes,
+    getEsZipCodes,
+    getMhZipCodes,
     addProvider,
     emailResults,
 };

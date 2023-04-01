@@ -7,45 +7,132 @@ const nodemailer = require('nodemailer');
 // Imports the accept-language-parser library to know what language to use
 const acceptLanguage = require('accept-language-parser');
 
-// Gets all providers from database depending on the users language preference 
-const getAllProviders = (req, res) => {
+// Gets all providers from database depending on the users language preference and also zipcode search 
+const getAllProviders = async (req, res) => {
     const preferredLanguages = acceptLanguage.parse(req.headers['accept-language']);
+    const requestedZipCode = req.body.zipcode;
 
     let query;
     if (preferredLanguages.length > 0 && preferredLanguages[0].code === 'en') {
         query = queries.getAllEnProviders;
-    } 
-    else if (preferredLanguages.length > 0 && preferredLanguages[1].code === 'es') {
-        query = queries.getAllEsProviders;
-    }
-    else if (preferredLanguages.length > 0 && preferredLanguages[2].code === 'mh') {
-        query = queries.getAllMhProviders;
-    }
 
-    pool.query(query, (error, results) => {
-        if (error) {
+        try {
+            const result = await pool.query(query);
+            let providers = result.rows;
+    
+            if (requestedZipCode) {
+                const zipCodes = await getZipCodes(requestedZipCode);
+                providers = providers.filter(provider => zipCodes.includes(provider.zipcode));
+                providers.sort((a, b) => zipCodes.indexOf(a.zipcode) - zipCodes.indexOf(b.zipcode)); 
+            }
+    
+            res.status(200).json(providers);
+        } 
+        catch (error) {
             console.error('Error executing query', error);
             res.status(500).send('An error occurred');
         }
-        else
-            res.status(200).json(results.rows);
+    } 
+    else if (preferredLanguages.length > 0 && preferredLanguages[1].code === 'es') {
+        query = queries.getAllEsProviders;
+
+        try {
+            const result = await pool.query(query);
+            let providers = result.rows;
+    
+            if (requestedZipCode) {
+                const zipCodes = await getZipCodes(requestedZipCode);
+                providers = providers.filter(provider => zipCodes.includes(provider.zipcode));
+                providers.sort((a, b) => zipCodes.indexOf(a.zipcode) - zipCodes.indexOf(b.zipcode)); 
+            }
+    
+            res.status(200).json(providers);
+        } 
+        catch (error) {
+            console.error('Error executing query', error);
+            res.status(500).send('An error occurred');
+        }
+    }
+    else if (preferredLanguages.length > 0 && preferredLanguages[2].code === 'mh') {
+        query = queries.getAllMhProviders;
+
+        try {
+            const result = await pool.query(query);
+            let providers = result.rows;
+    
+            if (requestedZipCode) {
+                const zipCodes = await getZipCodes(requestedZipCode);
+                providers = providers.filter(provider => zipCodes.includes(provider.zipcode));
+                providers.sort((a, b) => zipCodes.indexOf(a.zipcode) - zipCodes.indexOf(b.zipcode)); 
+            }
+    
+            res.status(200).json(providers);
+        } 
+        catch (error) {
+            console.error('Error executing query', error);
+            res.status(500).send('An error occurred');
+        }
+    }
+};
+
+// Helper function to get the users requested zipcode from the database 
+const getZipCodes = async (requestedZipCode) => {
+    return new Promise((resolve, reject) => {
+        pool.query(queries.getZipCodes, [requestedZipCode], (error, results) => {
+            if (error) {
+                console.error(error);
+                reject(new Error('Error retrieving zip codes'));
+            } 
+            else {
+                const zipCodes = results.rows.map((row) => row.zipcode);
+                resolve(zipCodes);
+            }
+        });
     });
 };
 
 // Gets providers zipcodes and orders them by closest to furthest
-const getZipCodes = async (req, res) => {
-    const requestedZipCode = req.body.zipcode;
+// const getZipCodes = async (req, res) => {
+//     const requestedZipCode = req.body.zipcode;
+//     try {
+//         pool.query(queries.getZipCodes, [requestedZipCode], (error, results) => {
+//             if (error)
+//                 throw error
+//             res.status(200).json(results.rows);
+//         });
+//     }
+//     catch (error) {
+//         console.error(error);
+//         res.status(500).send('Internal Server Error');
+//     } 
+// };
+
+// This function sets up the nodemailer info to send emails
+const sendEmail = async (to, subject, html) => {
+    const transporter = nodemailer.createTransport({
+        service: process.env.SERVICE,
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD
+        }
+    });
+  
+    // Define the email message
+    const message = {
+        from: process.env.EMAIL_USER,
+        to,
+        subject,
+        html
+    };
+  
+    // Send the email
     try {
-        pool.query(queries.getZipCodes, [requestedZipCode], (error, results) => {
-            if (error)
-                throw error
-            res.status(200).json(results.rows);
-        });
-    }
+        const info = await transporter.sendMail(message);
+        console.log(`Email sent successfully: ${info.messageId}`);
+    } 
     catch (error) {
         console.error(error);
-        res.status(500).send('Internal Server Error');
-    } 
+    }
 };
 
 // Sends an email to users that press the email results button 
@@ -160,34 +247,6 @@ const emailResults = async (req, res) => {
     catch (error) {
         console.error(error);
         return res.status(500).send('Internal Server Error');
-    }
-};
-  
-
-const sendEmail = async (to, subject, html) => {
-    const transporter = nodemailer.createTransport({
-        service: process.env.SERVICE,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASSWORD
-        }
-    });
-  
-    // Define the email message
-    const message = {
-        from: process.env.EMAIL_USER,
-        to,
-        subject,
-        html
-    };
-  
-    // Send the email
-    try {
-        const info = await transporter.sendMail(message);
-        console.log(`Email sent successfully: ${info.messageId}`);
-    } 
-    catch (error) {
-        console.error(error);
     }
 };
 

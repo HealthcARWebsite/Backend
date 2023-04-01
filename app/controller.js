@@ -302,7 +302,7 @@ const addProvider = (req, res) => {
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: process.env.EMAIL_USER,
-        subject: process.env.SUBJECT,
+        subject: 'New Provider Submission',
         text: `
             Name: ${providerData.name}\n
             Email: ${providerData.email}\n

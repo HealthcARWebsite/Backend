@@ -285,11 +285,14 @@ const emailResults = async (req, res) => {
 // Allows users to submit a request to add new providers via email
 const addProvider = (req, res) => {
     const providerData = req.body;
-    //const providerData = JSON.parse(req.body);
+    // const providerData = JSON.parse(req.body);
     
-    // Check for empty name or message fields
-    if (!providerData.name || !providerData.message)
-        return res.status(400).send('Error: Name and message fields are required');
+    if (!providerData.name || !providerData.message) {
+        return res.status(400).json({
+            success: false,
+            message: 'Error: Name and message fields are required'
+        });
+    }
   
     const transporter = nodemailer.createTransport({
         service: process.env.SERVICE,
@@ -315,11 +318,17 @@ const addProvider = (req, res) => {
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
             console.log(error);
-            res.status(500).send('Error: Could not send email');
+            return res.status(500).json({
+                success: false,
+                message: 'Error: Could not send email'
+            });
         } 
         else {
             console.log('Email sent: ' + info.response);
-            res.status(200).send('Email sent successfully');
+            return res.status(200).json({
+                success: true,
+                message: 'Email sent successfully'
+            });
         }
     });
 };

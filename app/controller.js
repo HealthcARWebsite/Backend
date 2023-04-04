@@ -180,12 +180,12 @@ const emailResults = async (req, res) => {
         pool.query(queries.getEnZipCodes, [requestedZipCode], (error, results) => {
             if (error) {
                 console.error(error);
-                return res.status(500).send('Internal Server Error');
+                return res.status(500).json({ message: 'Internal Server Error' });
             }
   
             // Check if results.rows is undefined or empty
             if (!results.rows || results.rows.length === 0) 
-                return res.status(404).send('No clinics found');
+                return res.status(404).json({ message: 'No clinics found' });
     
             // Push the clinic information objects to the clinics array
             results.rows.forEach(row => {
@@ -273,12 +273,12 @@ const emailResults = async (req, res) => {
             sendEmail(userEmailAddress, 'HealthcAR Results', html);
   
             // Send a success response
-            return res.status(200).send('Email sent successfully');
+            return res.status(200).json({ message: 'Email sent successfully' });
         });
     } 
     catch (error) {
         console.error(error);
-        return res.status(500).send('Internal Server Error');
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
 };
 

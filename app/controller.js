@@ -10,7 +10,9 @@ const acceptLanguage = require('accept-language-parser');
 // Gets all providers from database depending on the users language preference and also zipcode search 
 const getAllProviders = async (req, res) => {
     const preferredLanguages = acceptLanguage.parse(req.headers['accept-language']);
-    const requestedZipCode = req.body.zipcode;
+    const requestedZipCode = req.query.zipcode;
+    //const age = req.query.age;
+    //const hasHealthInsurance = req.query.hasHealthInsurance;
 
     let query;
     if (preferredLanguages.length > 0 && preferredLanguages[0].code === 'en') {
@@ -30,7 +32,7 @@ const getAllProviders = async (req, res) => {
         } 
         catch (error) {
             console.error('Error executing query', error);
-            res.status(500).send('An error occurred');
+            res.status(500).json({ message: 'An error occurred' });
         }
     } 
     else if (preferredLanguages.length > 0 && preferredLanguages[1].code === 'es') {
@@ -50,7 +52,7 @@ const getAllProviders = async (req, res) => {
         } 
         catch (error) {
             console.error('Error executing query', error);
-            res.status(500).send('An error occurred');
+            res.status(500).json({ message: 'An error occurred' });
         }
     }
     else if (preferredLanguages.length > 0 && preferredLanguages[2].code === 'mh') {
@@ -70,7 +72,7 @@ const getAllProviders = async (req, res) => {
         } 
         catch (error) {
             console.error('Error executing query', error);
-            res.status(500).send('An error occurred');
+            res.status(500).json({ message: 'An error occurred' });
         }
     }
 };

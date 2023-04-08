@@ -1,6 +1,6 @@
 const getAllEnProviders = 'SELECT name, description, url, zipcode FROM providers';
-const getAllEsProviders = 'SELECT name, description, url, zipcode FROM providers';
-const getAllMhProviders = 'SELECT name, description, url, zipcode FROM providers';
+const getAllEsProviders = 'SELECT name, Es_description, url, zipcode FROM providers';
+const getAllMhProviders = 'SELECT name, Mh_description, url, zipcode FROM providers';
 //const getZipCodes = 'SELECT * FROM providers ORDER BY ABS(zipcode - $1) ASC';
 
 const getEnZipCodes = `
@@ -13,7 +13,7 @@ const getEnZipCodes = `
 `;
 
 const getEsZipCodes = `
-    SELECT name, description, url, zipcode FROM providers 
+    SELECT name, Es_description, url, zipcode FROM providers 
     ORDER BY CASE 
     WHEN zipcode ~ '^[0-9]+$' 
     THEN ABS(zipcode::integer - $1::integer) 
@@ -22,7 +22,7 @@ const getEsZipCodes = `
 `;
 
 const getMhZipCodes = `
-    SELECT name, description, url, zipcode FROM providers 
+    SELECT name, Mh_description, url, zipcode FROM providers 
     ORDER BY CASE 
     WHEN zipcode ~ '^[0-9]+$' 
     THEN ABS(zipcode::integer - $1::integer) 

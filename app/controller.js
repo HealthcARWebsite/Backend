@@ -10,7 +10,7 @@ const acceptLanguage = require('accept-language-parser');
 // Gets all providers from database depending on the users language preference and also zipcode search 
 const getAllProviders = async (req, res) => {
     const preferredLanguages = acceptLanguage.parse(req.headers['accept-language']);
-    const requestedZipCode = req.query.zipcode;
+    const requestedZipCode = req.query.zipCode;
     //const age = req.query.age;
     //const hasHealthInsurance = req.query.hasHealthInsurance;
 
@@ -162,7 +162,8 @@ const sendEmail = async (to, subject, html) => {
 
 // Sends an email to users that press the email results button 
 const emailResults = async (req, res) => {
-    const requestedZipCode = req.body.zipcode;
+    //const requestedZipCode = req.body.zipcode;
+    const requestedZipCode = req.query.zipcode;
     const userEmailAddress = req.body.emailAddress;
     
     try {

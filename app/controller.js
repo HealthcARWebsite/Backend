@@ -162,8 +162,7 @@ const sendEmail = async (to, subject, html) => {
 
 // Sends an email to users that press the email results button 
 const emailResults = async (req, res) => {
-    //const requestedZipCode = req.body.zipcode;
-    const requestedZipCode = req.query.zipcode;
+    const requestedZipCode = req.body.zipCode;
     const userEmailAddress = req.body.emailAddress;
     
     try {
@@ -279,7 +278,6 @@ const emailResults = async (req, res) => {
 // Allows users to submit a request to add new providers via email
 const addProvider = (req, res) => {
     const providerData = req.body;
-    // const providerData = JSON.parse(req.body);
     
     if (!providerData.name || !providerData.message) {
         return res.status(400).json({

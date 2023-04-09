@@ -178,7 +178,7 @@ const emailResults = async (req, res) => {
                         return res.status(500).json({ message: 'Internal Server Error' });
                     }
         
-                    // Check if results.rows is undefined or empty
+                    /// Check if results.rows is undefined or empty
                     if (!results.rows || results.rows.length === 0) 
                         return res.status(404).json({ message: 'No clinics found' });
             

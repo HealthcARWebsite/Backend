@@ -163,7 +163,7 @@ const sendEmail = async (to, subject, html) => {
 // Sends an email to users that press the email results button 
 const emailResults = async (req, res) => {
     const requestedZipCode = req.body.zipCode;
-    const userEmailAddress = req.body.emailAddress;
+    const userEmailAddress = req.body.email;
     const preferredLanguages = acceptLanguage.parse(req.headers['accept-language']);
     
     try {

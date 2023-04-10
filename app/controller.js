@@ -163,7 +163,7 @@ const sendEmail = async (to, subject, html) => {
 // Sends an email to users that press the email results button 
 const emailResults = async (req, res) => {
     const requestedZipCode = req.body.zipCode;
-    const userEmailAddress = req.body.emailAddress.email;
+    const userEmailAddress = req.body; //.emailAddress.email;
     const preferredLanguages = acceptLanguage.parse(req.headers['accept-language']);
     
     try {
@@ -265,7 +265,7 @@ const emailResults = async (req, res) => {
                     `;
 
                     // Send the HTML email with the clinics data
-                    sendEmail(userEmailAddress, 'HealthcAR Results', html);
+                    sendEmail(userEmailAddress.email, 'HealthcAR Results', html);
         
                     // Send a success response
                     return res.status(200).json({ message: 'Email sent successfully' });
@@ -366,7 +366,7 @@ const emailResults = async (req, res) => {
                     `;
 
                     // Send the HTML email with the clinics data
-                    sendEmail(userEmailAddress, 'HealthcAR Results', html);
+                    sendEmail(userEmailAddress.email, 'HealthcAR Results', html);
         
                     // Send a success response
                     return res.status(200).json({ message: 'Email sent successfully' });
@@ -467,7 +467,7 @@ const emailResults = async (req, res) => {
                     `;
 
                     // Send the HTML email with the clinics data
-                    sendEmail(userEmailAddress, 'HealthcAR Results', html);
+                    sendEmail(userEmailAddress.email, 'HealthcAR Results', html);
         
                     // Send a success response
                     return res.status(200).json({ message: 'Email sent successfully' });

@@ -163,7 +163,7 @@ const sendEmail = async (to, subject, html) => {
 // Sends an email to users that press the email results button 
 const emailResults = async (req, res) => {
     const requestedZipCode = req.body.zipCode;
-    const userEmailAddress = req.body; //.emailAddress.email;
+    const userEmailAddress = req.body.emailAddress.email; 
     const preferredLanguages = acceptLanguage.parse(req.headers['accept-language']);
     
     try {
@@ -265,7 +265,7 @@ const emailResults = async (req, res) => {
                     `;
 
                     // Send the HTML email with the clinics data
-                    sendEmail(userEmailAddress.email, 'HealthcAR Results', html);
+                    sendEmail(userEmailAddress, 'HealthcAR Results', html);
         
                     // Send a success response
                     return res.status(200).json({ message: 'Email sent successfully' });
@@ -317,32 +317,6 @@ const emailResults = async (req, res) => {
                             </head>
                             <body>
                                 <p>Hello,</p>
-                                <p>
-                                    Thank you for choosing HealthcAR, the road to accessbile healthcare in the state of Arkansas! 
-                                    We at HealthcAR make it a priorty to deliver low-cost healthcare clinic information to people 
-                                    around the state of Arkansas.
-                                </p>
-                                <p>
-                                    Privacy more than ever before is a top concern for many people. We at HealtcAR take pride 
-                                    in collecting zero user data so our users can feel at ease when using our website. 
-                                </p>
-                                <p> 
-                                    You are recieving this email because you have requested to have your results emailed to you. 
-                                    Your results are attached to this email.
-                                </p>
-                                <p>
-                                    Furthermore, if you would like to request another provider be added to HealthcAR, please 
-                                    navigate to the HealtcAR website and click on the button that says add provider and
-                                    fill out the form of the providers information. Our team will then review the provider 
-                                    credentials and make it available to others after review.
-                                </p>
-                                <p>
-                                    Again, thank you for choosing HealthcAR! 
-                                </p>
-                                <p>
-                                    Sincerely, <br>
-                                    The HealthcAR Team
-                                </p>
 
                                 <h1>Providers</h1>
                                 <table>
@@ -366,7 +340,7 @@ const emailResults = async (req, res) => {
                     `;
 
                     // Send the HTML email with the clinics data
-                    sendEmail(userEmailAddress.email, 'HealthcAR Results', html);
+                    sendEmail(userEmailAddress, 'HealthcAR Results', html);
         
                     // Send a success response
                     return res.status(200).json({ message: 'Email sent successfully' });
@@ -467,7 +441,7 @@ const emailResults = async (req, res) => {
                     `;
 
                     // Send the HTML email with the clinics data
-                    sendEmail(userEmailAddress.email, 'HealthcAR Results', html);
+                    sendEmail(userEmailAddress, 'HealthcAR Results', html);
         
                     // Send a success response
                     return res.status(200).json({ message: 'Email sent successfully' });

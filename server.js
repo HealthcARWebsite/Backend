@@ -1,8 +1,10 @@
 // Imports the express library 
 const express = require('express');
 
+import cors from 'cors';
+
 // Imports the cors library
-const cors = require('cors');
+// const cors = require('cors');
 
 // Imports the bodyParser library
 const bodyParser = require('body-parser');
@@ -18,21 +20,21 @@ const providerRoutes = require('./app/routes.js');
 // Instantiates the app
 const app = express();
 
-app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*")
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested, Content-Type, Accept Authorization"
-    )
-    if (req.method === "OPTIONS") {
-      res.header(
-        "Access-Control-Allow-Methods",
-        "POST, PUT, PATCH, GET, DELETE"
-      )
-      return res.status(200).json({})
-    }
-    next()
-})
+// app.use((req, res, next) => {
+//     res.header("Access-Control-Allow-Origin", "*")
+//     res.header(
+//       "Access-Control-Allow-Headers",
+//       "Origin, X-Requested, Content-Type, Accept Authorization"
+//     )
+//     if (req.method === "OPTIONS") {
+//       res.header(
+//         "Access-Control-Allow-Methods",
+//         "POST, PUT, PATCH, GET, DELETE"
+//       )
+//       return res.status(200).json({})
+//     }
+//     next()
+// })
 
 // Middleware functions
 app.use(cors());

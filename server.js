@@ -1,10 +1,10 @@
 // Imports the express library 
 const express = require('express');
 
-import cors from 'cors';
+// import cors from 'cors';
 
 // Imports the cors library
-// const cors = require('cors');
+const cors = require('cors');
 
 // Imports the bodyParser library
 const bodyParser = require('body-parser');

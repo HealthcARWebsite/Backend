@@ -163,8 +163,12 @@ const sendEmail = async (to, subject, html) => {
 // Sends an email to users that press the email results button 
 const emailResults = async (req, res) => {
     const requestedZipCode = req.body.zipCode;
-    const userEmailAddress = req.body.emailAddress.email; 
+    const userEmailAddress = req.body.emailAddress.email || req.body.email; 
     const preferredLanguages = acceptLanguage.parse(req.headers['accept-language']);
+
+    console.log(req.body.emailAddress.email);
+    console.log(req.body.email);
+    console.log(userEmailAddress);
     
     try {
         // Initializes clinic array
@@ -263,7 +267,8 @@ const emailResults = async (req, res) => {
                             </body>
                         </html>
                     `;
-
+                    
+                    console.log(userEmailAddress)
                     // Send the HTML email with the clinics data
                     sendEmail(userEmailAddress, 'HealthcAR Results', html);
         

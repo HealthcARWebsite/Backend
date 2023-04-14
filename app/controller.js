@@ -11,8 +11,6 @@ const acceptLanguage = require('accept-language-parser');
 const getAllProviders = async (req, res) => {
     const preferredLanguages = acceptLanguage.parse(req.headers['accept-language']);
     const requestedZipCode = req.query.zipCode;
-    //const age = req.query.age;
-    //const hasHealthInsurance = req.query.hasHealthInsurance;
 
     let query;
     let providers;
@@ -160,15 +158,311 @@ const sendEmail = async (to, subject, html) => {
     }
 };
 
+// // Sends an email to users that press the email results button 
+// const emailResults = async (req, res) => {
+//     const requestedZipCode = req.body.zipCode;
+//     const userEmailAddress = req.body.emailAddress.email || req.body.email; 
+//     const preferredLanguages = acceptLanguage.parse(req.headers['accept-language']);
+
+//     console.log(req.body.emailAddress.email);
+//     console.log(req.body.email);
+//     console.log(userEmailAddress);
+    
+//     try {
+//         // Initializes clinic array
+//         const clinics = []; 
+
+//         for (const lang of preferredLanguages) {
+//             if (lang.code === 'en') {
+//                 pool.query(queries.getEnZipCodes, [requestedZipCode], (error, results) => {
+//                     if (error) {
+//                         console.error(error);
+//                         return res.status(500).json({ message: 'Internal Server Error' });
+//                     }
+        
+//                     /// Check if results.rows is undefined or empty
+//                     if (!results.rows || results.rows.length === 0) 
+//                         return res.status(404).json({ message: 'No clinics found' });
+            
+//                     // Push the clinic information objects to the clinics array
+//                     results.rows.forEach(row => {
+//                         clinics.push({
+//                             name: row.name,
+//                             description: row.description,
+//                             url: row.url,
+//                             zipcode: row.zipcode
+//                         });
+//                     });
+            
+//                     // Render the template with the clinics data
+//                     const html = `
+//                         <html>
+//                             <head>
+//                                 <style>
+//                                     table {
+//                                         font-family: arial, sans-serif;
+//                                         border-collapse: collapse;
+//                                         width: 100%;
+//                                     }
+                                    
+//                                     td, th {
+//                                         border: 1px solid #dddddd;
+//                                         text-align: left;
+//                                         padding: 8px;
+//                                     }
+                                    
+//                                     tr:nth-child(even) {
+//                                         background-color: #dddddd;
+//                                     }
+//                                 </style>
+//                             </head>
+//                             <body>
+//                                 <p>Hello,</p>
+//                                 <p>
+//                                     Thank you for choosing HealthcAR, the road to accessbile healthcare in the state of Arkansas! 
+//                                     We at HealthcAR make it a priorty to deliver low-cost healthcare clinic information to people 
+//                                     around the state of Arkansas.
+//                                 </p>
+//                                 <p>
+//                                     Privacy more than ever before is a top concern for many people. We at HealtcAR take pride 
+//                                     in collecting zero user data so our users can feel at ease when using our website. 
+//                                 </p>
+//                                 <p> 
+//                                     You are recieving this email because you have requested to have your results emailed to you. 
+//                                     Your results are attached to this email.
+//                                 </p>
+//                                 <p>
+//                                     Furthermore, if you would like to request another provider be added to HealthcAR, please 
+//                                     navigate to the HealtcAR website and click on the button that says add provider and
+//                                     fill out the form of the providers information. Our team will then review the provider 
+//                                     credentials and make it available to others after review.
+//                                 </p>
+//                                 <p>
+//                                     Again, thank you for choosing HealthcAR! 
+//                                 </p>
+//                                 <p>
+//                                     Sincerely, <br>
+//                                     The HealthcAR Team
+//                                 </p>
+
+//                                 <h1>Providers</h1>
+//                                 <table>
+//                                     <tr>
+//                                         <th>Name</th>
+//                                         <th>Description</th>
+//                                         <th>URL</th>
+//                                         <th>Zipcode</th>
+//                                     </tr>
+//                                     ${clinics.map(clinic => `
+//                                     <tr>
+//                                         <td>${clinic.name}</td>
+//                                         <td>${clinic.description}</td>
+//                                         <td>${clinic.url}</td>
+//                                         <td>${clinic.zipcode}</td>
+//                                     </tr>
+//                                     `).join('')}
+//                                 </table>
+//                             </body>
+//                         </html>
+//                     `;
+                    
+//                     console.log(userEmailAddress)
+//                     // Send the HTML email with the clinics data
+//                     sendEmail(userEmailAddress, 'HealthcAR Results', html);
+        
+//                     // Send a success response
+//                     return res.status(200).json({ message: 'Email sent successfully' });
+//                 });
+//             }
+
+//             else if (lang.code === 'es') {
+//                 pool.query(queries.getEsZipCodes, [requestedZipCode], (error, results) => {
+//                     if (error) {
+//                         console.error(error);
+//                         return res.status(500).json({ message: 'Internal Server Error' });
+//                     }
+        
+//                     // Check if results.rows is undefined or empty
+//                     if (!results.rows || results.rows.length === 0) 
+//                         return res.status(404).json({ message: 'No clinics found' });
+            
+//                     // Push the clinic information objects to the clinics array
+//                     results.rows.forEach(row => {
+//                         clinics.push({
+//                             name: row.name,
+//                             description: row.description,
+//                             url: row.url,
+//                             zipcode: row.zipcode
+//                         });
+//                     });
+            
+//                     // Render the template with the clinics data
+//                     const html = `
+//                         <html>
+//                             <head>
+//                                 <style>
+//                                     table {
+//                                         font-family: arial, sans-serif;
+//                                         border-collapse: collapse;
+//                                         width: 100%;
+//                                     }
+                                    
+//                                     td, th {
+//                                         border: 1px solid #dddddd;
+//                                         text-align: left;
+//                                         padding: 8px;
+//                                     }
+                                    
+//                                     tr:nth-child(even) {
+//                                         background-color: #dddddd;
+//                                     }
+//                                 </style>
+//                             </head>
+//                             <body>
+//                                 <p>Hello,</p>
+
+//                                 <h1>Providers</h1>
+//                                 <table>
+//                                     <tr>
+//                                         <th>Name</th>
+//                                         <th>Description</th>
+//                                         <th>URL</th>
+//                                         <th>Zipcode</th>
+//                                     </tr>
+//                                     ${clinics.map(clinic => `
+//                                     <tr>
+//                                         <td>${clinic.name}</td>
+//                                         <td>${clinic.description}</td>
+//                                         <td>${clinic.url}</td>
+//                                         <td>${clinic.zipcode}</td>
+//                                     </tr>
+//                                     `).join('')}
+//                                 </table>
+//                             </body>
+//                         </html>
+//                     `;
+
+//                     // Send the HTML email with the clinics data
+//                     sendEmail(userEmailAddress, 'HealthcAR Results', html);
+        
+//                     // Send a success response
+//                     return res.status(200).json({ message: 'Email sent successfully' });
+//                 });
+//             }
+
+//             else if (lang.code === 'mh') {
+//                 pool.query(queries.getMhZipCodes, [requestedZipCode], (error, results) => {
+//                     if (error) {
+//                         console.error(error);
+//                         return res.status(500).json({ message: 'Internal Server Error' });
+//                     }
+        
+//                     // Check if results.rows is undefined or empty
+//                     if (!results.rows || results.rows.length === 0) 
+//                         return res.status(404).json({ message: 'No clinics found' });
+            
+//                     // Push the clinic information objects to the clinics array
+//                     results.rows.forEach(row => {
+//                         clinics.push({
+//                             name: row.name,
+//                             description: row.description,
+//                             url: row.url,
+//                             zipcode: row.zipcode
+//                         });
+//                     });
+            
+//                     // Render the template with the clinics data
+//                     const html = `
+//                         <html>
+//                             <head>
+//                                 <style>
+//                                     table {
+//                                         font-family: arial, sans-serif;
+//                                         border-collapse: collapse;
+//                                         width: 100%;
+//                                     }
+                                    
+//                                     td, th {
+//                                         border: 1px solid #dddddd;
+//                                         text-align: left;
+//                                         padding: 8px;
+//                                     }
+                                    
+//                                     tr:nth-child(even) {
+//                                         background-color: #dddddd;
+//                                     }
+//                                 </style>
+//                             </head>
+//                             <body>
+//                                 <p>Hello,</p>
+//                                 <p>
+//                                     Thank you for choosing HealthcAR, the road to accessbile healthcare in the state of Arkansas! 
+//                                     We at HealthcAR make it a priorty to deliver low-cost healthcare clinic information to people 
+//                                     around the state of Arkansas.
+//                                 </p>
+//                                 <p>
+//                                     Privacy more than ever before is a top concern for many people. We at HealtcAR take pride 
+//                                     in collecting zero user data so our users can feel at ease when using our website. 
+//                                 </p>
+//                                 <p> 
+//                                     You are recieving this email because you have requested to have your results emailed to you. 
+//                                     Your results are attached to this email.
+//                                 </p>
+//                                 <p>
+//                                     Furthermore, if you would like to request another provider be added to HealthcAR, please 
+//                                     navigate to the HealtcAR website and click on the button that says add provider and
+//                                     fill out the form of the providers information. Our team will then review the provider 
+//                                     credentials and make it available to others after review.
+//                                 </p>
+//                                 <p>
+//                                     Again, thank you for choosing HealthcAR! 
+//                                 </p>
+//                                 <p>
+//                                     Sincerely, <br>
+//                                     The HealthcAR Team
+//                                 </p>
+
+//                                 <h1>Providers</h1>
+//                                 <table>
+//                                     <tr>
+//                                         <th>Name</th>
+//                                         <th>Description</th>
+//                                         <th>URL</th>
+//                                         <th>Zipcode</th>
+//                                     </tr>
+//                                     ${clinics.map(clinic => `
+//                                     <tr>
+//                                         <td>${clinic.name}</td>
+//                                         <td>${clinic.description}</td>
+//                                         <td>${clinic.url}</td>
+//                                         <td>${clinic.zipcode}</td>
+//                                     </tr>
+//                                     `).join('')}
+//                                 </table>
+//                             </body>
+//                         </html>
+//                     `;
+
+//                     // Send the HTML email with the clinics data
+//                     sendEmail(userEmailAddress, 'HealthcAR Results', html);
+        
+//                     // Send a success response
+//                     return res.status(200).json({ message: 'Email sent successfully' });
+//                 });
+//             }
+//         }
+//     } 
+//     catch (error) {
+//         console.error(error);
+//         return res.status(500).json({ message: 'Internal Server Error' });
+//     }
+// };
+
 // Sends an email to users that press the email results button 
 const emailResults = async (req, res) => {
     const requestedZipCode = req.body.zipCode;
-    const userEmailAddress = req.body.emailAddress.email || req.body.email; 
+    const userEmailAddress = req.body.emailAddress.email; 
     const preferredLanguages = acceptLanguage.parse(req.headers['accept-language']);
-
-    console.log(req.body.emailAddress.email);
-    console.log(req.body.email);
-    console.log(userEmailAddress);
     
     try {
         // Initializes clinic array
@@ -176,281 +470,99 @@ const emailResults = async (req, res) => {
 
         for (const lang of preferredLanguages) {
             if (lang.code === 'en') {
-                pool.query(queries.getEnZipCodes, [requestedZipCode], (error, results) => {
-                    if (error) {
-                        console.error(error);
-                        return res.status(500).json({ message: 'Internal Server Error' });
-                    }
+                const results = await pool.query(queries.getEnZipCodes, [requestedZipCode]);
         
-                    /// Check if results.rows is undefined or empty
-                    if (!results.rows || results.rows.length === 0) 
-                        return res.status(404).json({ message: 'No clinics found' });
-            
-                    // Push the clinic information objects to the clinics array
-                    results.rows.forEach(row => {
-                        clinics.push({
-                            name: row.name,
-                            description: row.description,
-                            url: row.url,
-                            zipcode: row.zipcode
-                        });
+                /// Check if results.rows is undefined or empty
+                if (!results.rows || results.rows.length === 0) 
+                    return res.status(404).json({ message: 'No clinics found' });
+        
+                // Push the clinic information objects to the clinics array
+                results.rows.forEach(row => {
+                    clinics.push({
+                        name: row.name,
+                        description: row.description,
+                        url: row.url,
+                        zipcode: row.zipcode
                     });
-            
-                    // Render the template with the clinics data
-                    const html = `
-                        <html>
-                            <head>
-                                <style>
-                                    table {
-                                        font-family: arial, sans-serif;
-                                        border-collapse: collapse;
-                                        width: 100%;
-                                    }
-                                    
-                                    td, th {
-                                        border: 1px solid #dddddd;
-                                        text-align: left;
-                                        padding: 8px;
-                                    }
-                                    
-                                    tr:nth-child(even) {
-                                        background-color: #dddddd;
-                                    }
-                                </style>
-                            </head>
-                            <body>
-                                <p>Hello,</p>
-                                <p>
-                                    Thank you for choosing HealthcAR, the road to accessbile healthcare in the state of Arkansas! 
-                                    We at HealthcAR make it a priorty to deliver low-cost healthcare clinic information to people 
-                                    around the state of Arkansas.
-                                </p>
-                                <p>
-                                    Privacy more than ever before is a top concern for many people. We at HealtcAR take pride 
-                                    in collecting zero user data so our users can feel at ease when using our website. 
-                                </p>
-                                <p> 
-                                    You are recieving this email because you have requested to have your results emailed to you. 
-                                    Your results are attached to this email.
-                                </p>
-                                <p>
-                                    Furthermore, if you would like to request another provider be added to HealthcAR, please 
-                                    navigate to the HealtcAR website and click on the button that says add provider and
-                                    fill out the form of the providers information. Our team will then review the provider 
-                                    credentials and make it available to others after review.
-                                </p>
-                                <p>
-                                    Again, thank you for choosing HealthcAR! 
-                                </p>
-                                <p>
-                                    Sincerely, <br>
-                                    The HealthcAR Team
-                                </p>
-
-                                <h1>Providers</h1>
-                                <table>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Description</th>
-                                        <th>URL</th>
-                                        <th>Zipcode</th>
-                                    </tr>
-                                    ${clinics.map(clinic => `
-                                    <tr>
-                                        <td>${clinic.name}</td>
-                                        <td>${clinic.description}</td>
-                                        <td>${clinic.url}</td>
-                                        <td>${clinic.zipcode}</td>
-                                    </tr>
-                                    `).join('')}
-                                </table>
-                            </body>
-                        </html>
-                    `;
-                    
-                    console.log(userEmailAddress)
-                    // Send the HTML email with the clinics data
-                    sendEmail(userEmailAddress, 'HealthcAR Results', html);
-        
-                    // Send a success response
-                    return res.status(200).json({ message: 'Email sent successfully' });
                 });
-            }
-
-            else if (lang.code === 'es') {
-                pool.query(queries.getEsZipCodes, [requestedZipCode], (error, results) => {
-                    if (error) {
-                        console.error(error);
-                        return res.status(500).json({ message: 'Internal Server Error' });
-                    }
         
-                    // Check if results.rows is undefined or empty
-                    if (!results.rows || results.rows.length === 0) 
-                        return res.status(404).json({ message: 'No clinics found' });
-            
-                    // Push the clinic information objects to the clinics array
-                    results.rows.forEach(row => {
-                        clinics.push({
-                            name: row.name,
-                            description: row.description,
-                            url: row.url,
-                            zipcode: row.zipcode
-                        });
-                    });
-            
-                    // Render the template with the clinics data
-                    const html = `
-                        <html>
-                            <head>
-                                <style>
-                                    table {
-                                        font-family: arial, sans-serif;
-                                        border-collapse: collapse;
-                                        width: 100%;
-                                    }
-                                    
-                                    td, th {
-                                        border: 1px solid #dddddd;
-                                        text-align: left;
-                                        padding: 8px;
-                                    }
-                                    
-                                    tr:nth-child(even) {
-                                        background-color: #dddddd;
-                                    }
-                                </style>
-                            </head>
-                            <body>
-                                <p>Hello,</p>
+                // Render the template with the clinics data
+                const html = `
+                    <html>
+                        <head>
+                            <style>
+                                table {
+                                    font-family: arial, sans-serif;
+                                    border-collapse: collapse;
+                                    width: 100%;
+                                }
+                                
+                                td, th {
+                                    border: 1px solid #dddddd;
+                                    text-align: left;
+                                    padding: 8px;
+                                }
+                                
+                                tr:nth-child(even) {
+                                    background-color: #dddddd;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <p>Hello,</p>
+                            <p>
+                                Thank you for choosing HealthcAR, the road to accessbile healthcare in the state of Arkansas! 
+                                We at HealthcAR make it a priorty to deliver low-cost healthcare clinic information to people 
+                                around the state of Arkansas.
+                            </p>
+                            <p>
+                                Privacy more than ever before is a top concern for many people. We at HealtcAR take pride 
+                                in collecting zero user data so our users can feel at ease when using our website. 
+                            </p>
+                            <p> 
+                                You are recieving this email because you have requested to have your results emailed to you. 
+                                Your results are attached to this email.
+                            </p>
+                            <p>
+                                Furthermore, if you would like to request another provider be added to HealthcAR, please 
+                                navigate to the HealtcAR website and click on the button that says add provider and
+                                fill out the form of the providers information. Our team will then review the provider 
+                                credentials and make it available to others after review.
+                            </p>
+                            <p>
+                                Again, thank you for choosing HealthcAR! 
+                            </p>
+                            <p>
+                                Sincerely, <br>
+                                The HealthcAR Team
+                            </p>
 
-                                <h1>Providers</h1>
-                                <table>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Description</th>
-                                        <th>URL</th>
-                                        <th>Zipcode</th>
-                                    </tr>
-                                    ${clinics.map(clinic => `
-                                    <tr>
-                                        <td>${clinic.name}</td>
-                                        <td>${clinic.description}</td>
-                                        <td>${clinic.url}</td>
-                                        <td>${clinic.zipcode}</td>
-                                    </tr>
-                                    `).join('')}
-                                </table>
-                            </body>
-                        </html>
-                    `;
+                            <h1>Providers</h1>
+                            <table>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>URL</th>
+                                    <th>Zipcode</th>
+                                </tr>
+                                ${clinics.map(clinic => `
+                                <tr>
+                                    <td>${clinic.name}</td>
+                                    <td>${clinic.description}</td>
+                                    <td>${clinic.url}</td>
+                                    <td>${clinic.zipcode}</td>
+                                </tr>
+                                `).join('')}
+                            </table>
+                        </body>
+                    </html>
+                `;
 
-                    // Send the HTML email with the clinics data
-                    sendEmail(userEmailAddress, 'HealthcAR Results', html);
-        
-                    // Send a success response
-                    return res.status(200).json({ message: 'Email sent successfully' });
-                });
-            }
-
-            else if (lang.code === 'mh') {
-                pool.query(queries.getMhZipCodes, [requestedZipCode], (error, results) => {
-                    if (error) {
-                        console.error(error);
-                        return res.status(500).json({ message: 'Internal Server Error' });
-                    }
-        
-                    // Check if results.rows is undefined or empty
-                    if (!results.rows || results.rows.length === 0) 
-                        return res.status(404).json({ message: 'No clinics found' });
-            
-                    // Push the clinic information objects to the clinics array
-                    results.rows.forEach(row => {
-                        clinics.push({
-                            name: row.name,
-                            description: row.description,
-                            url: row.url,
-                            zipcode: row.zipcode
-                        });
-                    });
-            
-                    // Render the template with the clinics data
-                    const html = `
-                        <html>
-                            <head>
-                                <style>
-                                    table {
-                                        font-family: arial, sans-serif;
-                                        border-collapse: collapse;
-                                        width: 100%;
-                                    }
-                                    
-                                    td, th {
-                                        border: 1px solid #dddddd;
-                                        text-align: left;
-                                        padding: 8px;
-                                    }
-                                    
-                                    tr:nth-child(even) {
-                                        background-color: #dddddd;
-                                    }
-                                </style>
-                            </head>
-                            <body>
-                                <p>Hello,</p>
-                                <p>
-                                    Thank you for choosing HealthcAR, the road to accessbile healthcare in the state of Arkansas! 
-                                    We at HealthcAR make it a priorty to deliver low-cost healthcare clinic information to people 
-                                    around the state of Arkansas.
-                                </p>
-                                <p>
-                                    Privacy more than ever before is a top concern for many people. We at HealtcAR take pride 
-                                    in collecting zero user data so our users can feel at ease when using our website. 
-                                </p>
-                                <p> 
-                                    You are recieving this email because you have requested to have your results emailed to you. 
-                                    Your results are attached to this email.
-                                </p>
-                                <p>
-                                    Furthermore, if you would like to request another provider be added to HealthcAR, please 
-                                    navigate to the HealtcAR website and click on the button that says add provider and
-                                    fill out the form of the providers information. Our team will then review the provider 
-                                    credentials and make it available to others after review.
-                                </p>
-                                <p>
-                                    Again, thank you for choosing HealthcAR! 
-                                </p>
-                                <p>
-                                    Sincerely, <br>
-                                    The HealthcAR Team
-                                </p>
-
-                                <h1>Providers</h1>
-                                <table>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Description</th>
-                                        <th>URL</th>
-                                        <th>Zipcode</th>
-                                    </tr>
-                                    ${clinics.map(clinic => `
-                                    <tr>
-                                        <td>${clinic.name}</td>
-                                        <td>${clinic.description}</td>
-                                        <td>${clinic.url}</td>
-                                        <td>${clinic.zipcode}</td>
-                                    </tr>
-                                    `).join('')}
-                                </table>
-                            </body>
-                        </html>
-                    `;
-
-                    // Send the HTML email with the clinics data
-                    sendEmail(userEmailAddress, 'HealthcAR Results', html);
-        
-                    // Send a success response
-                    return res.status(200).json({ message: 'Email sent successfully' });
-                });
+                // Send the HTML email with the clinics data
+                sendEmail(userEmailAddress, 'HealthcAR Results', html);
+    
+                // Send a success response
+                return res.status(200).json({ message: 'Email sent successfully' });
             }
         }
     } 
@@ -459,6 +571,16 @@ const emailResults = async (req, res) => {
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 };
+
+// try {
+//     const results = await pool.query(queries.getEnZipCodes, [requestedZipCode]);
+//     // process results...
+//   } 
+
+
+
+
+
 
 // Allows users to submit a request to add new providers via email
 const addProvider = (req, res) => {

@@ -8,11 +8,12 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 // Imports the dotenv library
-const dotenv = require('dotenv').config();
+require('dotenv').config();
 
-// Imports pool from db.js (basically allows a connection between backend and database)
-const pool = require('./db.js');
+// Imports db.js (basically allows a connection between backend and database)
+require('./db.js');
 
+// Imports routes.js 
 const providerRoutes = require('./app/routes.js');
 
 // Instantiates the app

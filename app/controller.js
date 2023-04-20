@@ -464,16 +464,6 @@ const emailResults = async (req, res) => {
     }
 };
 
-// try {
-//     const results = await pool.query(queries.getEnZipCodes, [requestedZipCode]);
-//     // process results...
-//   } 
-
-
-
-
-
-
 // Allows users to submit a request to add new providers via email
 const addProvider = (req, res) => {
     const providerData = req.body;
@@ -529,6 +519,6 @@ module.exports = {
     getEnZipCodes,
     getEsZipCodes,
     getMhZipCodes,
-    addProvider,
     emailResults,
+    addProvider,
 };

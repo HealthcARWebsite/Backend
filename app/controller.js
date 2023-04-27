@@ -326,35 +326,32 @@ const emailResults = async (req, res) => {
                             </style>
                         </head>
                         <body>
-                            <p>Hello,</p>
+                            <p>Hola,</p>
                             <p>
-                                Thank you for choosing HealthcAR, the road to accessbile healthcare in the state of Arkansas! 
-                                We at HealthcAR make it a priorty to deliver low-cost healthcare clinic information to people 
-                                around the state of Arkansas.
+                                Gracias por escoger  HealthcAR, el camino hacia atención médica accesible en el estado de Arkansas. 
+                                Nuestra prioridad es proporcionar información sobre atención médica a bajo costo. 
                             </p>
                             <p>
-                                Privacy more than ever before is a top concern for many people. We at HealtcAR take pride 
-                                in collecting zero user data so our users can feel at ease when using our website. 
+                                La privacidad es más importante que nunca , nosotros en HealthcAR nos enorgullece que conectamos 
+                                cero información sobre nuestros usuarios. 
                             </p>
                             <p> 
-                                You are recieving this email because you have requested to have your results emailed to you. 
-                                Your results are attached to this email.
+                                Estás recibiendo este e-mail por que haz  solicitado que tus resultados fueron enviados por correo 
+                                electrónico. Tus resultados están incluidos en este e-mail. 
                             </p>
                             <p>
-                                Furthermore, if you would like to request another provider be added to HealthcAR, please 
-                                navigate to the HealtcAR website and click on the button that says add provider and
-                                fill out the form of the providers information. Our team will then review the provider 
-                                credentials and make it available to others after review.
+                                Además,  si quisieras que otro proveedor sea agregado a HealthcAR, por favor visitar nuestro sitio y 
+                                selecciona el botón que dice "agregar proveedor " y llena la información sobre este proveedor. Nuestro equipo revisará la información proporcionáramos a otros usuarios. 
                             </p>
                             <p>
-                                Again, thank you for choosing HealthcAR! 
+                                Una vez más gracias por usar HealthcAR, 
                             </p>
                             <p>
-                                Sincerely, <br>
-                                The HealthcAR Team
+                                Sinceramente, <br>
+                                Equipo HealthcAR
                             </p>
 
-                            <h1>Providers</h1>
+                            <h1>Proveedores</h1>
                             <table>
                                 <tr>
                                     <th>Name</th>

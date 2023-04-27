@@ -37,7 +37,7 @@ app.use((req, res, next) => {
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.json())
-app.use('/providers/', providerRoutes);
+app.use('/providers', providerRoutes);
 
 // Simple test route
 app.get('/', (req, res) => {

@@ -19,7 +19,14 @@ const getAllProviders = async (req, res) => {
             query = queries.getAllEnProviders;
             try {
                 const result = await pool.query(query);
-                providers = result.rows;
+                providers = result.rows.map(provider => {
+                    return {
+                        name: provider.name,
+                        description: provider.description,
+                        url: provider.url,
+                        zipcode: provider.zipcode
+                    };
+                });
 
                 if (requestedZipCode) {
                     const zipCodes = await getEnZipCodes(requestedZipCode);
@@ -40,7 +47,14 @@ const getAllProviders = async (req, res) => {
             query = queries.getAllEsProviders;
             try {
                 const result = await pool.query(query);
-                providers = result.rows;
+                providers = result.rows.map(provider => {
+                    return {
+                        name: provider.name,
+                        description: provider.es_description,
+                        url: provider.url,
+                        zipcode: provider.zipcode
+                    };
+                });
 
                 if (requestedZipCode) {
                     const zipCodes = await getEsZipCodes(requestedZipCode);
@@ -58,13 +72,21 @@ const getAllProviders = async (req, res) => {
             }
         } 
         else if (lang.code === 'mh') {
-            query = queries.getAllMhProviders;
+            // query = queries.getAllMhProviders;
+            query = queries.getAllEnProviders;
             try {
                 const result = await pool.query(query);
-                providers = result.rows;
+                providers = result.rows.map(provider => {
+                    return {
+                        name: provider.name,
+                        description: provider.description,
+                        url: provider.url,
+                        zipcode: provider.zipcode
+                    };
+                });
 
                 if (requestedZipCode) {
-                    const zipCodes = await getMhZipCodes(requestedZipCode);
+                    const zipCodes = await getEnZipCodes(requestedZipCode);
                     providers = providers.filter(provider => zipCodes.includes(provider.zipcode));
                     providers.sort((a, b) => zipCodes.indexOf(a.zipcode) - zipCodes.indexOf(b.zipcode)); 
                 }

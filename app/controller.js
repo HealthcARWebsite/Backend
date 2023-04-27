@@ -79,7 +79,7 @@ const getAllProviders = async (req, res) => {
                 providers = result.rows.map(provider => {
                     return {
                         name: provider.name,
-                        description: provider.mh_description,
+                        description: provider.description,
                         url: provider.url,
                         zipcode: provider.zipcode
                     };

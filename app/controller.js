@@ -286,7 +286,6 @@ const emailResults = async (req, res) => {
                 // Send a success response
                 return res.status(200).json({ message: 'Email sent successfully' });
             }
-
             else if (lang.code === 'es') {
                 const results = await pool.query(queries.getEsZipCodes, [requestedZipCode]);
         
@@ -298,7 +297,7 @@ const emailResults = async (req, res) => {
                 results.rows.forEach(row => {
                     clinics.push({
                         name: row.name,
-                        description: row.description,
+                        description: row.es_description,
                         url: row.url,
                         zipcode: row.zipcode
                     });
@@ -382,9 +381,8 @@ const emailResults = async (req, res) => {
                 // Send a success response
                 return res.status(200).json({ message: 'Email sent successfully' });
             }
-
             else if (lang.code === 'mh') {
-                const results = await pool.query(queries.getMhZipCodes, [requestedZipCode]);
+                const results = await pool.query(queries.getEnZipCodes, [requestedZipCode]);
         
                 /// Check if results.rows is undefined or empty
                 if (!results.rows || results.rows.length === 0) 

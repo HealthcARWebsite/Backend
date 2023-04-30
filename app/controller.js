@@ -55,7 +55,7 @@ const getAllProviders = async (req, res) => {
                         zipcode: provider.zipcode
                     };
                 });
-
+                
                 if (requestedZipCode) {
                     const zipCodes = await getEsZipCodes(requestedZipCode);
                     providers = providers.filter(provider => zipCodes.includes(provider.zipcode));

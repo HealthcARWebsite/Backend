@@ -12,7 +12,4 @@ router.get('/get-providers', controller.getAllProviders);
 router.post('/contact-us', controller.addProvider);
 router.post('/email', controller.emailResults);
 
-// router.get('/es/providers/get-providers', controller.getAllProviders);
-// router.get('/mh/providers/get-providers', controller.getAllProviders);
-
 module.exports = router;
